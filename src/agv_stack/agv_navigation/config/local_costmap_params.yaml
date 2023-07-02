@@ -1,0 +1,17 @@
+local_costmap:
+   global_frame: odom                 # 全局坐标系，一般设置为odom
+   robot_base_frame: agv_base_link    # 移动机器人基座坐标系
+   transform_tolerance: 1.0           # tf的延时，默认0.2s
+   update_frequency: 5.0              # 地图更新的频率，默认为5Hz
+   publish_frequency: 1.0             # 地图发布的频率，如在rviz中显示，默认为0Hz
+   static_map: false                  # 使用预先加载的地图，该值为true时，rolling_window一定为false
+   ## begin rolling_window param config
+   rolling_window: true               # 使用rolling_window地图，默认为false
+   resolution: 0.01                   # 地图分辨率，默认0.05m/cell
+   width: 3.0
+   height: 3.0
+   ## begin rolling_window param config
+
+   plugins:
+     - {name: obstacle_layer,          type: "costmap_2d::ObstacleLayer"}
+     - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}

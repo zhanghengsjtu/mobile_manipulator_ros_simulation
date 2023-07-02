@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="mobile_robot">
+
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="laser_height" value="0.95"/>
+
+    <!-- The world frame is necessary, or the robot will tip over due to gravity and incorrect inertial -->
+    <link name="world"/>
+    <joint name="odom_to_world" type="fixed">
+        <parent link="world" />
+        <child link="odom" />
+    </joint>
+
+    <link name="odom">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0.2" rpy="0 0 0" />
+            <inertia 
+                ixx="1" ixy="0.0" ixz="0.0"
+                iyy="1" iyz="0.0"
+                izz="1" />
+        </inertial>
+        <!--<collision>
+            <origin xyz="0 0 0.005" rpy="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </collision>
+        <visual>
+            <origin xyz="0 0 0.005" rpy="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </visual>-->
+    </link>
+
+    <link name="x_link">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0.2" rpy="0 0 0" />
+            <inertia 
+                ixx="1" ixy="0.0" ixz="0.0"
+                iyy="1" iyz="0.0"
+                izz="1" />
+        </inertial>
+        <!--<collision>
+            <origin xyz="0 0 0.005" rpy="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </collision>
+        <visual>
+            <origin xyz="0 0 0.005" rpy="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </visual>-->
+    </link>
+
+    <link name="y_link">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0.2" rpy="0 0 0" />
+            <inertia 
+                ixx="1" ixy="0.0" ixz="0.0"
+                iyy="1" iyz="0.0"
+                izz="1" />
+        </inertial>
+        <!--<collision>
+            <origin xyz="0 0 0.005" rpy="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </collision>
+        <visual>
+            <origin xyz="0 0 0.005" rpy="0 0 0" />
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </visual>-->
+    </link>
+
+    <link name="agv_base_link">
+        <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0.2" rpy="0 0 0" />
+            <inertia 
+                ixx="1" ixy="0.0" ixz="0.0"
+                iyy="1" iyz="0.0"
+                izz="1" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/agv_base_link.DAE" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://agv_description/meshes/agv_base_link_collision.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="x_joint" type="prismatic">
+        <parent link="odom" />
+        <child link="x_link" />
+        <origin xyz="0.0 0 0.0" rpy="0.0 0.0 0.0" />
+        <limit effort="10000.0" lower="-1000" upper="1000" velocity="0.5"/>
+        <axis xyz="1 0 0"/>
+    </joint>
+
+    <joint name="y_joint" type="prismatic">
+        <parent link="x_link" />
+        <child link="y_link" />
+        <origin xyz="0.0 0 0.0" rpy="0.0 0.0 0.0" />
+        <limit effort="10000.0" lower="-1000" upper="1000" velocity="0.5"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+    <joint name="angle_joint" type="continuous">
+        <parent link="y_link" />
+        <child link="agv_base_link" />
+        <origin xyz="0.0 0 0.0" rpy="0.0 0.0 0.0" />
+        <limit effort="10000.0" velocity="0.5"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+
+    <!-- add transmission for the joints-->
+    <transmission name="x_joint_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="x_joint">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="x_joint_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="y_joint_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="y_joint">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="y_joint_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="angle_joint_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="angle_joint">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="angle_joint_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <link name="laser"/>
+
+    <joint name="laser_joint" type="fixed">
+        <origin xyz="0 0 ${laser_height}" rpy="0 0 0" />
+        <parent link="agv_base_link"/>
+        <child link="laser"/>
+    </joint> 
+
+    <gazebo reference="laser">
+        <material>Gazebo/Blue</material>
+        <turnGravityOff>true</turnGravityOff>
+        <sensor type="ray" name="head_hokuyo_sensor">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>false</visualize>
+        <update_rate>50</update_rate>
+        <ray>
+            <scan>
+            <horizontal>
+                <samples>1080</samples>
+                <resolution>1</resolution>
+                <min_angle>0</min_angle>
+                <max_angle>${PI * 2}</max_angle>
+            </horizontal>
+            </scan>
+            <range>
+            <min>0.10</min>
+            <max>8.0</max>
+            <resolution>0.01</resolution>
+            </range>
+        </ray>
+        <plugin name="gazebo_ros_head_hokuyo1_controller" filename="libgazebo_ros_laser.so">
+            <topicName>/scan</topicName>
+            <frameName>laser</frameName>
+        </plugin>
+        </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

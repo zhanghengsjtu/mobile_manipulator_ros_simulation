@@ -1,0 +1,33 @@
+map_type: costmap
+footprint: [[0.35, 0.33], [0.35, -0.33], [-0.35, -0.33], [-0.35, 0.33]] # 以机器人为中心，多边形的位置
+footprint_padding: 0.01                                                 # padding的大小，越大导航越安全
+
+static_layer:
+  enabled: true
+  unknown_cost_value: -1        # default: -1 notice that for unsigned char -1 == 255
+  lethal_cost_threshold: 100    # default: 100
+  track_unknown_space: true     # default: true
+
+obstacle_layer:
+  enabled: true
+  track_unknown_space: false        # default: false
+  combination_method: 1             # 1. max. 0: overwrite; 99:nothing
+  # 下面几个参数可以为所有传感器设置，也可以为单独传感器设置
+  max_obstacle_height: 0.4          # default: 2.0
+  obstacle_range: 2.5               # default: 2.5
+  raytrace_range: 3.0               # default: 3.0 
+  observation_sources: scan         # 数据源名称
+  scan:                             # 数据源参数配置
+    topic: scan                    # 传感器话题
+    data_type: LaserScan            # 传感器数据类型
+    clearing: true                  # default: false
+    marking: true                   # defalut: true
+
+
+inflation_layer: 
+  enabled: true
+  inflation_radius: 0.7         # default: 0.55
+  cost_scaling_factor: 10.0     # default: 10.0
+
+
+

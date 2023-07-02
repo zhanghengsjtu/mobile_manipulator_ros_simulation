@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="mobile_manipulator" >
+    <!--ur5-->
+    <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+    <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+    <xacro:ur5_robot prefix="" joint_limited="true"
+        shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+        shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+        elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+        wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+        wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+        wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
+        transmission_hw_interface="hardware_interface/PositionJointInterface" 
+    />
+    
+    <!--agv-->
+    <!-- We can override the namespace of the mobiel robot. Here we use /mm represents mobile manipulator -->
+    <xacro:include filename="$(find agv_description)/urdf/agv.urdf.xacro" />
+    <xacro:mobile_robot/>
+
+    <!--ur5 connect to agv-->
+    <xacro:property name="ur5_support_height" value="0.68"/>
+    <joint name="ur5_2_agv" type="fixed">
+        <parent link="agv_base_link" />
+        <child link="base_link" />
+        <origin xyz="0.1395 0 ${ur5_support_height + 0.393}" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <link name="ur5_support">
+        <inertial>
+            <mass value="8" />
+            <origin xyz="0 0 ${ur5_support_height/2}" rpy="0 0 0"/>
+            <inertia 
+                ixx="${0.0833 * 8 * (3 * 0.075 * 0.075 + ur5_support_height * ur5_support_height)}" ixy="0.0" ixz="0.0"
+                iyy="${0.0833 * 8 * (3 * 0.075 * 0.075 + ur5_support_height * ur5_support_height)}" iyz="0.0"
+                izz="${0.5 * 8 * 0.075 * 0.075}" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 ${ur5_support_height/2}" rpy="0 0 0"/>
+            <material name="grey">
+                <color rgba="${185/255} ${185/255} ${185/255} 1.0"/>
+            </material>
+            <geometry>
+                <cylinder radius="0.075" length="${ur5_support_height}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 ${ur5_support_height/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.08" length="${ur5_support_height}"/>
+            </geometry>
+        </collision>
+    </link>
+    <gazebo reference="ur5_support">
+        <material>Gazebo/Grey</material>
+        <turnGravityOff>true</turnGravityOff>
+    </gazebo>
+
+    <joint name="ur5_support_2_agv" type="fixed">
+        <parent link="agv_base_link" />
+        <child link="ur5_support" />
+        <origin xyz="0.1395 0 0.393" rpy="0.0 0.0 0.0" />
+    </joint>
+
+</robot>

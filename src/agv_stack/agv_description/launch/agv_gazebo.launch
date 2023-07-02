@@ -1,0 +1,32 @@
+<launch>
+
+    <arg name="world_name" value="$(find agv_description)/worlds/dy_grasp.world"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_name)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find agv_description)/urdf/agv.xacro'" />
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"	args="-urdf -model agv -param robot_description"/> 
+
+    <rosparam file="$(find agv_description)/config/agv_joint_group_controller.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+            output="screen" args="agv_joint_state_controller 
+                                  agv_joint_group_controller"/>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+
+    <!--load cmd_vel controller-->
+    <node name="cmd_vel_controller" pkg="agv_control" type="agv_vel_controller"/> 
+
+</launch>

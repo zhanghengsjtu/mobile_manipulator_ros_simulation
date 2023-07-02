@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: mm_description
+    relative_path: urdf/mm.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/mobile_manipulator.srdf
+  CONFIG:
+    author_name: Heng Zhang
+    author_email: zhanghengsjtu@gmail.com
+    generated_timestamp: 1688252037

@@ -1,0 +1,25 @@
+agv_joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50  
+
+agv_joint_group_controller:
+  type: "position_controllers/JointGroupPositionController"
+  joints:
+    - x_joint
+    - y_joint
+    - angle_joint
+
+# gazebo_ros_control:
+#     pid_gains:
+#       x_joint:
+#         p: 100.0
+#         i: 0.01
+#         d: 1.0
+#       y_joint:
+#         p: 100.0
+#         i: 0.01
+#         d: 1.0
+#       angle_joint:
+#         p: 100.0
+#         i: 0.01
+#         d: 1.0

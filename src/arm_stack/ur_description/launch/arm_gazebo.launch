@@ -1,0 +1,44 @@
+<launch>
+
+    <arg name="world_name" value="$(find agv_description)/worlds/dy_grasp.world"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_name)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <include file="$(find ur_description)/launch/ur5_upload.launch">
+        <arg name="limited" value="true"/>
+        <arg name="transmission_hw_interface" value="hardware_interface/PositionJointInterface" />
+    </include>
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"	args="-urdf -model ur5 -param robot_description -z 0.5"/> 
+
+
+    <rosparam file="$(find ur_description)/config/ur_position_controller.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+          output="screen" args="arm_joint_state_controller 
+                                shoulder_pan_joint_position_controller
+                                shoulder_lift_joint_position_controller
+                                elbow_joint_position_controller
+                                wrist_1_joint_position_controller
+                                wrist_2_joint_position_controller
+                                wrist_3_joint_position_controller"/>
+
+
+    <!--<rosparam file="$(find ur_description)/config/ur_joint_group_controller.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+          output="screen" args="arm_joint_state_controller 
+                                arm_joint_group_controller"/>-->
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+
+</launch>

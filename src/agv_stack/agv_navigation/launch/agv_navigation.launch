@@ -1,0 +1,27 @@
+<launch>
+
+    <!-- 1. 加载gazebo环境 -->
+    <arg name="world_name" value="$(find agv_description)/worlds/dy_grasp.world"/>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_name)" />
+    </include>
+
+    <!--2. 加载urdf机器人模型-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find agv_description)/urdf/agv.xacro'" /> 
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    
+    <!--3. 将机器人模型加载进gazebo-->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model agv -param robot_description"/> 
+
+    <!--4. 加载gazebo中定义的控制器-->
+    <rosparam file="$(find agv_description)/config/agv_joint_group_controller.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" 
+          args="spawn agv_joint_state_controller agv_joint_group_controller"/>
+
+    <!--4. 加载用户自定义的移动机器人控制接口-->
+    <node name="cmd_vel_controller" pkg="agv_control" type="agv_vel_controller"/>  
+
+    <!--5. 加载环境地图和导航功能模块-->
+    <include file="$(find agv_navigation)/launch/agv_navigation_impl.launch"/>
+
+</launch>
