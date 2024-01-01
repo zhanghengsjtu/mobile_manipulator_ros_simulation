@@ -1,5 +1,6 @@
 <launch>
-
+    <arg name="use_map" default="false"/>
+    <arg name="use_rviz" default="false"/>
     <!-- 1. 加载gazebo环境 -->
     <arg name="world_name" value="$(find agv_description)/worlds/dy_grasp.world"/>
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -22,6 +23,9 @@
     <node name="cmd_vel_controller" pkg="agv_control" type="agv_vel_controller"/>  
 
     <!--5. 加载环境地图和导航功能模块-->
-    <include file="$(find agv_navigation)/launch/agv_navigation_impl.launch"/>
+    <include file="$(find agv_navigation)/launch/agv_navigation_impl.launch">
+        <arg name="use_map" value="$(arg use_map)" />
+        <arg name="use_rviz" value="$(arg use_rviz)" />
+    </include>
 
 </launch>

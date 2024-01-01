@@ -1,0 +1,8 @@
+<launch>
+
+    <include file="$(find agv_navigation)/launch/agv_navigation.launch">
+        <arg name="use_map" value="false" />
+        <arg name="use_rviz" value="false" />
+    </include>
+
+</launch>

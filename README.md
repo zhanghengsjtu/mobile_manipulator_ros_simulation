@@ -14,7 +14,7 @@
 
 #### agv_navigation
 
-移动机器人导航，直接运动`roslaunch agv_navigation agv_navigation.launch`即可。注意通过`agv_control/agv_vel_controller`模拟出了`cmd_vel`接口，否则不能与`navigation`包契合；
+移动机器人导航，直接运动`roslaunch agv_navigation agv_navigation.launch`即可。注意通过`agv_control/agv_vel_controller`模拟出了`cmd_vel`接口，否则不能与`navigation`包契合。
 
 #### map_builder
 
@@ -23,6 +23,8 @@
 #### agv_control
 
 因为移动机器人的模型被等价成xy方向的平动和绕z轴的旋转，但是ros中的很多算法需要与`cmd_vel`交互，因此该包将接收`cmd_vel`消息，并转换成gazebo能够识别的消息，驱动移动机器人在(x,y,theta)上的运动；
+
+
 
 ### arm_stack
 
@@ -60,6 +62,18 @@ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 # 保存地图
 rosrun map_server map_saver -f map.yaml      # 后面是地图的名称
+```
+
+### 移动机器人自主探索
+
+```
+# 启动gazebo环境
+roslaunch agv_navigation agv_exploring.launch
+
+# 启动建图算法
+roslaunch map_builder mapping.launch
+
+# 在rviz上使用箭头控制小车运动即可
 ```
 
 ### 移动机器人导航

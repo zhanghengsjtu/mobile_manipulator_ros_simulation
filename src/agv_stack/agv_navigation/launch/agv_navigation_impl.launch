@@ -1,7 +1,12 @@
 <launch>
 
-    <!-- 加载环境地图 -->
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find map_builder)/map/dy_grasp.yaml"/>
+    <arg name="use_map" default="true"/>
+    <arg name="use_rviz" default="true"/>
+    <arg name="map_name" default="$(find map_builder)/map/dy_grasp.yaml"/>
+    <group if="$(arg use_map)">
+        <!-- 加载环境地图 -->
+        <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_name)"/>
+    </group>
 
     <!-- 运行虚拟定位，兼容AMCL输出. 对于虚拟定位，需要设置一个/odom与/map之间的静态坐标变换 -->
     <node pkg="fake_localization" type="fake_localization" name="fake_localization" output="screen" />
@@ -22,6 +27,8 @@
     </node>
 
     <!-- 启动rviz-->  
-    <node name="rviz_nav" pkg="rviz" type="rviz" args="-d $(find agv_navigation)/rviz/nav.rviz"/>
+    <group if="$(arg use_rviz)">
+        <node name="rviz_nav" pkg="rviz" type="rviz" args="-d $(find agv_navigation)/rviz/nav.rviz"/>
+    </group>
 
 </launch>
