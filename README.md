@@ -12,13 +12,14 @@
 
 不同接口的对比参见`gazebo不同控制接口对比.md`文件
 
-#### agv_navigation
-
-移动机器人导航，直接运动`roslaunch agv_navigation agv_navigation.launch`即可。注意通过`agv_control/agv_vel_controller`模拟出了`cmd_vel`接口，否则不能与`navigation`包契合。
-
 #### map_builder
 
 基于gmapping的建图方法，配合teleop_twist_keyboard键盘控制。
+
+
+#### agv_navigation
+
+移动机器人导航，直接运动`roslaunch agv_navigation agv_navigation.launch`即可。注意通过`agv_control/agv_vel_controller`模拟出了`cmd_vel`接口，否则不能与`navigation`包契合；
 
 #### agv_control
 
@@ -76,6 +77,22 @@ roslaunch map_builder mapping.launch
 # 在rviz上使用箭头控制小车运动即可
 ```
 
+### 移动机器人自主探索
+
+```
+# 启动gazebo环境
+roslaunch agv_navigation agv_exploring.launch
+
+# 启动建图算法
+roslaunch map_builder mapping.launch
+
+# 在rviz上使用箭头控制小车运动即可
+```
+
+效果如下图
+
+![键盘控制移动机器人建图](./doc/build_map-X4.gif)
+
 ### 移动机器人导航
 
 ```
@@ -85,6 +102,10 @@ roslaunch agv_navigation agv_navigation.launch
 # 在rviz界面上点击2D Nav Goal指定目标点
 ```
 
+效果如下图
+
+![移动机器人导航](./doc/agv_navigation-X4.gif)
+
 ### 机械臂Moveit
 
 ```
@@ -93,6 +114,10 @@ roslaunch ur_moveit_config demo_gazebo.launch
 
 # 在rviz中更新机械臂的目标点，然后点击plan and execute即可
 ```
+
+效果如下图
+
+![机械臂moveit运动规划](./doc/arm_moveit-X4.gif)
 
 ### 复合机器人
 
@@ -105,6 +130,10 @@ roslaunch agv_navigation agv_navigation_impl.launch
 
 # 在rviz中点击2D Nav Goal和Moveit的按钮，可以看到移动机器人导航和机械臂运动规划同时发生
 ```
+
+效果如下图
+
+![移动机器人导航 + 机械臂moveit运动规划](./doc/agv_navigation%2Barm_moveit-X4.gif)
 
 ## 修改注意事项
 
